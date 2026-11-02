@@ -14,7 +14,8 @@ export type RolesConfig = {
   fields?: { tenants?: string; tenant?: string; roles?: string; platform?: string }
 }
 
-type AnyUser = Record<string, unknown> | null | undefined
+/** Any user object (e.g. Payload's generated `User`); read defensively. */
+type AnyUser = unknown
 const idOf = (v: unknown): string | null => (v && typeof v === 'object' ? (v as { id?: unknown }).id != null ? String((v as { id: unknown }).id) : null : v != null && v !== '' ? String(v) : null)
 
 /** Per-site display names, e.g. `[{ role: 'curator', label: 'Editor' }]` (stored on the site by the plugin). */
@@ -45,8 +46,9 @@ export function defineRoles(config: RolesConfig) {
     throw new Error(`payload-plugin-roles: unknown role "${role}"`)
   }
 
-  const rows = (user: AnyUser) => (Array.isArray(user?.[f.tenants]) ? (user![f.tenants] as Record<string, unknown>[]) : [])
-  const platformRoles = (user: AnyUser) => (Array.isArray(user?.[f.platform]) ? (user![f.platform] as string[]) : [])
+  const field = (user: AnyUser, name: string): unknown => (user && typeof user === 'object' ? (user as Record<string, unknown>)[name] : undefined)
+  const rows = (user: AnyUser) => { const v = field(user, f.tenants); return Array.isArray(v) ? (v as Record<string, unknown>[]) : [] }
+  const platformRoles = (user: AnyUser) => { const v = field(user, f.platform); return Array.isArray(v) ? (v as string[]) : [] }
 
   /** Has this platform role (any platform role when omitted). */
   const isPlatform = (user: AnyUser, role?: string) => (role ? platformRoles(user).includes(role) : platformRoles(user).length > 0)
