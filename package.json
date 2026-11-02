@@ -1,0 +1,28 @@
+{
+  "name": "@captiveorigins/payload-plugin-roles",
+  "version": "0.1.0",
+  "description": "Per-site role ladders for multi-tenant Payload: Member, Author, Curator, Administrator (each including the ones below), platform roles, add-on roles, per-site role names, and access helpers that work with @payloadcms/plugin-multi-tenant.",
+  "keywords": ["payload", "payload-plugin", "payloadcms", "roles", "rbac", "multi-tenant", "access-control", "permissions"],
+  "license": "MIT",
+  "repository": { "type": "git", "url": "git+https://github.com/mgilardi/payload-plugin-roles.git" },
+  "type": "module",
+  "exports": { ".": { "types": "./dist/index.d.ts", "import": "./dist/index.js" } },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": ["dist", "README.md", "LICENSE"],
+  "engines": { "node": ">=20.9" },
+  "scripts": {
+    "build": "rm -rf dist && tsc -p tsconfig.build.json",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "prepack": "npm run build",
+    "prepublishOnly": "npm run typecheck && npm test"
+  },
+  "peerDependencies": { "payload": "^3.80.0" },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "payload": "3.92.1",
+    "typescript": "^5.9.0",
+    "vitest": "^3.2.0"
+  }
+}
