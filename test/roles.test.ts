@@ -80,7 +80,13 @@ describe('refusals (test audit 2026-11-10)', () => {
     const broken = { id: 'u', tenants: [{ tenant: null, roles: ['admin'] }, { roles: ['admin'] }] }
     expect(roles.sites(broken, 'member')).toEqual([])
     expect(roles.has(broken, null, 'member')).toBe(false)
-    // Not asserted: highest(broken, null) returns 'admin' (a site-less row matches a missing site). See docs/test-audit.md.
+    // highest() with no site gives no role, even when a row has no site either (fixed 2026-11-10).
+    for (const none of [null, undefined, '']) expect(roles.highest(broken, none)).toBeNull()
+    expect(roles.highest(broken, 'a')).toBeNull()
+    // A site-less row stays ignored next to a real one.
+    const mixed = { id: 'u', tenants: [{ tenant: null, roles: ['admin'] }, { tenant: 'a', roles: ['author'] }] }
+    expect(roles.highest(mixed, null)).toBeNull()
+    expect(roles.highest(mixed, 'a')).toBe('author')
   })
 
   it('a lower role, an add-on or an unknown stored role never passes a ladder check', () => {
@@ -116,6 +122,18 @@ describe('refusals (test audit 2026-11-10)', () => {
       expect(roles.isPlatform(bad)).toBe(false)
       expect(roles.highest(bad, 'a')).toBeNull()
     }
+  })
+
+  it('a roles value stored as a string, or a null row, grants nothing and does not throw (fixed 2026-11-10)', () => {
+    const odd = { id: 'u', tenants: [{ tenant: 'a', roles: 'admin' }, null, { tenant: 'b', roles: [42, null, 'author'] }], platformRoles: [] }
+    expect(() => roles.sites(odd, 'member')).not.toThrow()
+    expect(roles.sites(odd, 'member')).toEqual(['b'])
+    expect(roles.has(odd, 'a', 'member')).toBe(false)
+    expect(roles.highest(odd, 'a')).toBeNull()
+    expect(roles.highest(odd, 'b')).toBe('author')
+    const access = roles.access.atLeast('member', { platformRole: 'maintainer' })
+    const onlyString = { id: 'u', tenants: [{ tenant: 'a', roles: 'admin' }], platformRoles: [] }
+    expect(access(req(onlyString))).toBe(false)
   })
 
   it('access refuses users with no qualifying role, other platform roles, and maintainers when no platform role is named', () => {

@@ -2,6 +2,16 @@
 
 Kept by this repo's owning session, per `~/Code/CLAUDE.md` "Test self-audits". Newest first.
 
+## 2026-11-10: the lead's fixes after the first audit
+
+Suite: 15 tests before, 16 after (`npx vitest run`).
+
+- **`highest()` with no site.** It now returns `null` when the site is missing or empty, and a membership row without a site never matches. Anything unclear grants nothing. The assertion the first audit left out is back in "grants nothing without a site…", with a mixed case (a site-less row next to a real one).
+- **`roles` stored as a string.** A row's `roles` that isn't an array now reads as no roles, and non-string entries are skipped, so `sites()`, `has()`, `highest()` and the access function refuse without throwing. A `null` row is skipped too. Test: "a roles value stored as a string, or a null row, grants nothing and does not throw".
+- **Callers of `highest()`.** Nothing in `src/` calls it; it's exported for apps. `has()`, `sites()` and the access function don't use it, and their tests still pass unchanged.
+- **Mutation checks.** Removing the no-site guard in `highest()` fails "grants nothing without a site…". Putting back the old `roles` cast fails the string-roles test. The file was restored exactly after each.
+- Still open: the end-to-end test with `@payloadcms/plugin-multi-tenant` on a real Payload.
+
 ## 2026-11-10: first audit
 
 Suite before: 6 tests. After: 15 tests (`npx vitest run`, all in `test/roles.test.ts`). No `docs/decisions.md` yet, so the promises come from the README and the code comments.

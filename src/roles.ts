@@ -49,6 +49,11 @@ export function defineRoles(config: RolesConfig) {
   const field = (user: AnyUser, name: string): unknown => (user && typeof user === 'object' ? (user as Record<string, unknown>)[name] : undefined)
   const rows = (user: AnyUser) => { const v = field(user, f.tenants); return Array.isArray(v) ? (v as Record<string, unknown>[]) : [] }
   const platformRoles = (user: AnyUser) => { const v = field(user, f.platform); return Array.isArray(v) ? (v as string[]) : [] }
+  /** A row's roles. Anything but an array (e.g. a string) reads as no roles: unclear data grants nothing. */
+  const rowRoles = (row: Record<string, unknown> | undefined): string[] => {
+    const v = row && typeof row === 'object' ? row[f.roles] : undefined
+    return Array.isArray(v) ? v.filter((r): r is string => typeof r === 'string') : []
+  }
 
   /** Has this platform role (any platform role when omitted). */
   const isPlatform = (user: AnyUser, role?: string) => (role ? platformRoles(user).includes(role) : platformRoles(user).length > 0)
@@ -57,7 +62,7 @@ export function defineRoles(config: RolesConfig) {
   const sites = (user: AnyUser, role: string | readonly string[]): string[] => {
     const wanted = typeof role === 'string' ? atLeast(role) : role
     return rows(user)
-      .filter((row) => ((row[f.roles] as string[] | undefined) ?? []).some((r) => wanted.includes(r)))
+      .filter((row) => rowRoles(row).some((r) => wanted.includes(r)))
       .map((row) => idOf(row[f.tenant]))
       .filter((id): id is string => Boolean(id))
   }
@@ -66,10 +71,12 @@ export function defineRoles(config: RolesConfig) {
   const has = (user: AnyUser, site: unknown, role: string, { platformRole }: { platformRole?: string } = {}) =>
     (platformRole ? isPlatform(user, platformRole) : false) || (Boolean(idOf(site)) && sites(user, role).includes(idOf(site)!))
 
-  /** The user's highest ladder role on a site (null if none). */
+  /** The user's highest ladder role on a site (null if none). No site, or a row without one, never matches. */
   const highest = (user: AnyUser, site: unknown): string | null => {
-    const row = rows(user).find((r) => idOf(r[f.tenant]) === idOf(site))
-    const held = ((row?.[f.roles] as string[] | undefined) ?? []).map(rank).filter((i) => i >= 0)
+    const id = idOf(site)
+    if (!id) return null
+    const row = rows(user).find((r) => r && typeof r === 'object' && idOf(r[f.tenant]) === id)
+    const held = rowRoles(row).map(rank).filter((i) => i >= 0)
     return held.length ? ladder[Math.max(...held)]!.value : null
   }
 
