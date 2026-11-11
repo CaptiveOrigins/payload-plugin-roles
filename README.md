@@ -15,6 +15,17 @@ Permission matrices are overkill for that. This plugin gives you:
 
 A role on one site never grants anything on another.
 
+## On its own, and with others
+
+**On its own:** `defineRoles` gives you the helpers with no plugin installed at all. `rolesPlugin` only adds per-site role names to your tenants collection and keeps the role system on `config.custom.roles`. Field names default to the multi-tenant plugin's layout, and `fields` changes them.
+
+**Works with:**
+- **Payload's multi-tenant plugin** (`@payloadcms/plugin-multi-tenant`): its `tenants[].roles` layout is the default, and `roles.options()` fills its role select.
+
+No other Captive Origins plugin reads `config.custom.roles` yet.
+
+**Family:** It's part of the **Identity** family (a working draft): plugins designed to sit together for accounts and access.
+
 ## Install
 
 ```bash
