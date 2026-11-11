@@ -1,6 +1,6 @@
 {
   "name": "@captiveorigins/payload-plugin-roles",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Roles for Payload: per-site role ladders (Member, Author, Curator, Administrator) for multi-tenant sites, plus add-on and platform roles, per-site role names and access helpers.",
   "homepage": "https://github.com/CaptiveOrigins/payload-plugin-roles#readme",
   "bugs": {
