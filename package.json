@@ -1,10 +1,10 @@
 {
-  "name": "@captiveorigins/payload-plugin-roles",
+  "name": "@extantape/payload-plugin-roles",
   "version": "0.1.1",
   "description": "Roles for Payload: per-site role ladders (Member, Author, Curator, Administrator) for multi-tenant sites, plus add-on and platform roles, per-site role names and access helpers.",
-  "homepage": "https://github.com/CaptiveOrigins/payload-plugin-roles#readme",
+  "homepage": "https://github.com/ExtantApe/payload-plugin-roles#readme",
   "bugs": {
-    "url": "https://github.com/CaptiveOrigins/payload-plugin-roles/issues"
+    "url": "https://github.com/ExtantApe/payload-plugin-roles/issues"
   },
   "keywords": [
     "payload",
@@ -19,7 +19,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/CaptiveOrigins/payload-plugin-roles.git"
+    "url": "git+https://github.com/ExtantApe/payload-plugin-roles.git"
   },
   "type": "module",
   "exports": {

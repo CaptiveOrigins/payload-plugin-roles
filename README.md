@@ -29,11 +29,11 @@ No other Captive Origins plugin reads `config.custom.roles` yet.
 ## Install
 
 ```bash
-npm install @captiveorigins/payload-plugin-roles
+npm install @extantape/payload-plugin-roles
 ```
 
 ```ts
-import { defineRoles, rolesPlugin } from '@captiveorigins/payload-plugin-roles'
+import { defineRoles, rolesPlugin } from '@extantape/payload-plugin-roles'
 
 export const roles = defineRoles({
   ladder: [
