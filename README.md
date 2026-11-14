@@ -22,7 +22,7 @@ A role on one site never grants anything on another.
 **Works with:**
 - **Payload's multi-tenant plugin** (`@payloadcms/plugin-multi-tenant`): its `tenants[].roles` layout is the default, and `roles.options()` fills its role select.
 
-No other Captive Origins plugin reads `config.custom.roles` yet.
+No other plugin reads `config.custom.roles` yet.
 
 **Family:** It's part of the **Identity** family (a working draft): plugins designed to sit together for accounts and access.
 
